@@ -41,10 +41,16 @@
 #include "gz/sim/components/Name.hh"
 #include "gz/sim/components/NavSat.hh"
 #include "gz/sim/components/ParentEntity.hh"
+#include "gz/sim/components/Pose.hh"
 #include "gz/sim/components/Sensor.hh"
 #include "gz/sim/components/SphericalCoordinates.hh"
 #include "gz/sim/EntityComponentManager.hh"
 #include "gz/sim/Util.hh"
+
+#include <gz/math/Helpers.hh>
+#include <gz/math/Pose3.hh>
+#include <gz/math/SphericalCoordinates.hh>
+#include <gz/math/Vector3.hh>
 
 using namespace gz;
 using namespace sim;
