@@ -51,7 +51,6 @@
 #include <gz/math/Pose3.hh>
 #include <gz/math/SphericalCoordinates.hh>
 #include <gz/math/Vector3.hh>
-#include <gz/math/CoordinateVector3.hh>
 
 
 using namespace gz;
@@ -287,18 +286,12 @@ void NavSat::Implementation::Update(const EntityComponentManager &_ecm)
 
             auto xyzPose = world_pose * pose;
 
-            // lat / lon / elevation in rad / rad / m
             auto rad = sphericalCoordinatesComp->Data().PositionTransform(
-                math::CoordinateVector3::Metric(xyzPose.Pos()),
-                math::SphericalCoordinates::LOCAL,
+                xyzPose.Pos(),
+                math::SphericalCoordinates::LOCAL2,
                 math::SphericalCoordinates::SPHERICAL);
 
-            if (!rad.has_value() || !rad->IsSpherical()) {
-              latLonEle = std::nullopt;
-            } else {
-              // Return degrees
-              latLonEle = math::Vector3d(rad->Lat()->Degree(), rad->Lon()->Degree(), *rad->Z());
-            }
+            latLonEle = math::Vector3d(GZ_RTOD(rad.X()), GZ_RTOD(rad.Y()), rad.Z());
           }
         } else {
           gzdbg << "model" << std::endl;
