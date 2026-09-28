@@ -286,19 +286,23 @@ void NavSat::Implementation::Update(const EntityComponentManager &_ecm)
 
             latLonEle = std::nullopt;
 
-            // auto init_pose = _ecm.Component<components::Pose>(p->Data()); 
-            // auto trajectory_pose = _ecm.Component<components::TrajectoryPose>(p->Data());
-            // math::Pose3d world_pose = init_pose->Data() * trajectory_pose->Data();
+            auto init_pose = _ecm.Component<components::Pose>(p->Data()); 
+            auto trajectory_pose = _ecm.Component<components::TrajectoryPose>(p->Data());
 
-            // auto xyzPose = world_pose * pose;
+            if (!init_pose || !trajectory_pose) {
+              latLonEle = std::nullopt;
+            } else {
+              math::Pose3d world_pose = init_pose->Data() * trajectory_pose->Data();
 
-            // auto rad = sphericalCoordinatesComp->Data().PositionTransform(
-            //     xyzPose.Pos(),
-            //     math::SphericalCoordinates::LOCAL2,
-            //     math::SphericalCoordinates::SPHERICAL);
+              auto xyzPose = world_pose * pose;
 
-            // latLonEle = math::Vector3d(GZ_RTOD(rad.X()), GZ_RTOD(rad.Y()), rad.Z());
-            
+              auto rad = sphericalCoordinatesComp->Data().PositionTransform(
+                  xyzPose.Pos(),
+                  math::SphericalCoordinates::LOCAL2,
+                  math::SphericalCoordinates::SPHERICAL);
+
+              latLonEle = math::Vector3d(GZ_RTOD(rad.X()), GZ_RTOD(rad.Y()), rad.Z());
+            }
           }
         } else {
           gzdbg << "model" << std::endl;
