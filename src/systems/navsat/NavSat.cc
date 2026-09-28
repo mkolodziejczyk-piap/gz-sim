@@ -36,6 +36,7 @@
 #include <gz/sensors/SensorFactory.hh>
 #include <gz/sensors/NavSatSensor.hh>
 
+#include "gz/sim/components/Actor.hh"
 #include "gz/sim/components/LinearVelocity.hh"
 #include "gz/sim/components/Name.hh"
 #include "gz/sim/components/NavSat.hh"
