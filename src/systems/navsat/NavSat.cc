@@ -51,6 +51,8 @@
 #include <gz/math/Pose3.hh>
 #include <gz/math/SphericalCoordinates.hh>
 #include <gz/math/Vector3.hh>
+#include <gz/math/CoordinateVector3.hh>
+
 
 using namespace gz;
 using namespace sim;
