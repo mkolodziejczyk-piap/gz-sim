@@ -42,6 +42,7 @@
 #include "gz/sim/components/NavSat.hh"
 #include "gz/sim/components/ParentEntity.hh"
 #include "gz/sim/components/Sensor.hh"
+#include "gz/sim/components/SphericalCoordinates.hh"
 #include "gz/sim/EntityComponentManager.hh"
 #include "gz/sim/Util.hh"
 
@@ -253,17 +254,50 @@ void NavSat::Implementation::Update(const EntityComponentManager &_ecm)
           return true;
         }
 
+        std::optional<math::Vector3d> latLonEle;
+
         auto p = _ecm.Component<components::ParentEntity>(_entity);
         auto actorComp = _ecm.Component<components::Actor>(p->Data());
         if (nullptr == actorComp)
         {
           gzdbg << "actor" << std::endl;
+
+          auto poseComp = _ecm.Component<components::Pose>(_entity);
+          math::Pose3d pose = poseComp->Data();
+          
+          auto sphericalCoordinatesComp =
+            _ecm.Component<components::SphericalCoordinates>(
+            worldEntity(_entity, _ecm));
+          if (nullptr == sphericalCoordinatesComp)
+          {
+            latLonEle = std::nullopt;
+          } else {
+
+            auto init_pose = _ecm.Component<components::Pose>(p->Data()); 
+            auto trajectory_pose = _ecm.Component<components::TrajectoryPose>(p->Data());
+            math::Pose3d world_pose = init_pose->Data() * trajectory_pose->Data();
+
+            auto xyzPose = world_pose * pose;
+
+            // lat / lon / elevation in rad / rad / m
+            auto rad = sphericalCoordinatesComp->Data().PositionTransform(
+                math::CoordinateVector3::Metric(xyzPose.Pos()),
+                math::SphericalCoordinates::LOCAL,
+                math::SphericalCoordinates::SPHERICAL);
+
+            if (!rad.has_value() || !rad->IsSpherical()) {
+              latLonEle = std::nullopt;
+            } else {
+              // Return degrees
+              latLonEle = math::Vector3d(rad->Lat()->Degree(), rad->Lon()->Degree(), *rad->Z());
+            }
+          }
         } else {
           gzdbg << "model" << std::endl;
+          // Position
+          // auto latLonEle = sphericalCoordinates(_entity, _ecm);
+          latLonEle = sphericalCoordinates(_entity, _ecm);
         }
-
-        // Position
-        auto latLonEle = sphericalCoordinates(_entity, _ecm);
         if (!latLonEle)
         {
           gzwarn << "Failed to update NavSat sensor enity [" << _entity
