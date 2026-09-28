@@ -284,7 +284,7 @@ void NavSat::Implementation::Update(const EntityComponentManager &_ecm)
             latLonEle = std::nullopt;
           } else {
 
-            latLonEle = std::nullopt;
+            gzdbg << "actor pose" << std::endl;
 
             auto init_pose = _ecm.Component<components::Pose>(p->Data()); 
             auto trajectory_pose = _ecm.Component<components::TrajectoryPose>(p->Data());
