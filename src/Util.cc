@@ -81,17 +81,38 @@ math::Pose3d worldPose(const Entity &_entity,
   // work out pose in world frame
   math::Pose3d pose = poseComp->Data();
   auto p = _ecm.Component<components::ParentEntity>(_entity);
-  while (p)
+  // while (p)
+  // {
+  //   // get pose of parent entity
+  //   auto parentPose = _ecm.Component<components::Pose>(p->Data());
+  //   if (!parentPose)
+  //     break;
+  //   // transform pose
+  //   pose = parentPose->Data() * pose;
+  //   // keep going up the tree
+  //   p = _ecm.Component<components::ParentEntity>(p->Data());
+  // }
+  auto actorComp = _ecm.Component<components::Actor>(p->Data());
+  if (nullptr == actorComp)
   {
-    // get pose of parent entity
-    auto parentPose = _ecm.Component<components::Pose>(p->Data());
-    if (!parentPose)
-      break;
-    // transform pose
-    pose = parentPose->Data() * pose;
-    // keep going up the tree
-    p = _ecm.Component<components::ParentEntity>(p->Data());
-  }
+    while (p)
+    {
+        // get pose of parent entity
+        auto parentPose = _ecm.Component<components::Pose>(p->Data());
+        if (!parentPose)
+          break;
+        // transform pose
+        pose = parentPose->Data() * pose;
+        // keep going up the tree
+        p = _ecm.Component<components::ParentEntity>(p->Data());
+    }
+  } else {
+    auto init_pose = _ecm.Component<components::Pose>(p->Data()); 
+    auto trajectory_pose = _ecm.Component<components::TrajectoryPose>(p->Data());
+
+    math::Pose3d world_pose = init_pose->Data() * trajectory_pose->Data();
+    pose = world_pose * pose;
+  }  
   return pose;
 }
 
