@@ -252,6 +252,15 @@ void NavSat::Implementation::Update(const EntityComponentManager &_ecm)
           return true;
         }
 
+        auto p = _ecm.Component<components::ParentEntity>(_entity);
+        auto actorComp = _ecm.Component<components::Actor>(p->Data());
+        if (nullptr == actorComp)
+        {
+          gzdbg << "actor" << std::endl;
+        } else {
+          gzdbg << "model" << std::endl;
+        }
+
         // Position
         auto latLonEle = sphericalCoordinates(_entity, _ecm);
         if (!latLonEle)
