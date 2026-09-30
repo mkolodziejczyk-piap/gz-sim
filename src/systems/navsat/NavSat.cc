@@ -263,26 +263,24 @@ void NavSat::Implementation::Update(const EntityComponentManager &_ecm)
 
         // std::optional<math::Vector3d> latLonEle;
 
-        auto linkEntityComp = _ecm.Component<components::ParentEntity>(_entity);
-        auto parentEntityComp = _ecm.Component<components::ParentEntity>(linkEntityComp->Data());
+        // auto linkEntityComp = _ecm.Component<components::ParentEntity>(_entity);
+        // auto parentEntityComp = _ecm.Component<components::ParentEntity>(linkEntityComp->Data());
+        // auto actorComp = _ecm.Component<components::Actor>(parentEntityComp->Data());
+        
+        // auto nameComp = _ecm.Component<gz::sim::components::Name>(actorComp->Data());
+        // if (nameComp) {
+        //   gzdbg << "Entity name: " << nameComp->Data() << std::endl;
+        // }
 
-        auto actorComp = _ecm.Component<components::Actor>(parentEntityComp->Data());
+        // if (actorComp)
+        // {
+        //   gzdbg << "actor" << std::endl;
+        //   // auto poseComp = _ecm.Component<components::Pose>(_entity);
+        //   // // if (!poseComp) { 
+        //   // //   latLonEle = std::nullopt;  
+        //   // // } else {
 
-        auto nameComp = _ecm.Component<gz::sim::components::Name>(actorComp->Data());
-        if (nameComp) {
-          gzdbg << "Entity name: " << nameComp->Data() << std::endl;
-        }
-
-        if (actorComp)
-        {
-          gzdbg << "actor" << std::endl;
-        }
-        //   auto poseComp = _ecm.Component<components::Pose>(_entity);
-        //   // if (!poseComp) { 
-        //   //   latLonEle = std::nullopt;  
-        //   // } else {
-
-        //   math::Pose3d pose = poseComp->Data();
+        //   // math::Pose3d pose = poseComp->Data();
           
         //   auto sphericalCoordinatesComp =
         //     _ecm.Component<components::SphericalCoordinates>(
@@ -302,7 +300,8 @@ void NavSat::Implementation::Update(const EntityComponentManager &_ecm)
         //     } else {
         //       math::Pose3d world_pose = init_pose->Data() * trajectory_pose->Data();
 
-        //       auto xyzPose = world_pose * pose;
+        //       // auto xyzPose = world_pose * pose;
+        //       auto xyzPose = world_pose;
 
         //       auto rad = sphericalCoordinatesComp->Data().PositionTransform(
         //           xyzPose.Pos(),
@@ -314,7 +313,7 @@ void NavSat::Implementation::Update(const EntityComponentManager &_ecm)
         //   }
         // } else {
         //   gzdbg << "model" << std::endl;
-          // Position
+        //   // Position
           auto latLonEle = sphericalCoordinates(_entity, _ecm);
         //   latLonEle = sphericalCoordinates(_entity, _ecm);
         // }
