@@ -263,18 +263,16 @@ void NavSat::Implementation::Update(const EntityComponentManager &_ecm)
 
         // std::optional<math::Vector3d> latLonEle;
 
-        auto p = _ecm.Component<components::ParentEntity>(_entity);
-        auto actorComp = _ecm.Component<components::Actor>(p->Data());
+        auto linkEntityComp = _ecm.Component<components::ParentEntity>(_entity);
+        auto parentEntityComp = _ecm.Component<components::ParentEntity>(linkEntityComp->Data());
 
-        auto nameComp_1 = _ecm.Component<gz::sim::components::Name>(_entity);
-        if (nameComp_1) {
-          gzdbg << "Entity name: " << nameComp_1->Data() << std::endl;
+        auto actorComp = _ecm.Component<components::Actor>(parentEntityComp->Data());
+
+        auto nameComp = _ecm.Component<gz::sim::components::Name>(actorComp->Data());
+        if (nameComp) {
+          gzdbg << "Entity name: " << nameComp->Data() << std::endl;
         }
 
-        auto nameComp_2 = _ecm.Component<gz::sim::components::Name>(p->Data());
-        if (nameComp_2) {
-          gzdbg << "Parent Entity name: " << nameComp_2->Data() << std::endl;
-        }
         if (actorComp)
         {
           gzdbg << "actor" << std::endl;
