@@ -268,12 +268,12 @@ void NavSat::Implementation::Update(const EntityComponentManager &_ecm)
 
         auto nameComp_1 = _ecm.Component<gz::sim::components::Name>(_entity);
         if (nameComp_1) {
-          std::cout << "Entity name: " << nameComp_1->Data() << std::endl;
+          gzdbg << "Entity name: " << nameComp_1->Data() << std::endl;
         }
 
         auto nameComp_2 = _ecm.Component<gz::sim::components::Name>(p->Data());
         if (nameComp_2) {
-          std::cout << "Parent Entity name: " << nameComp_2->Data() << std::endl;
+          gzdbg << "Parent Entity name: " << nameComp_2->Data() << std::endl;
         }
         if (actorComp)
         {
