@@ -261,62 +261,62 @@ void NavSat::Implementation::Update(const EntityComponentManager &_ecm)
           return true;
         }
 
-        // std::optional<math::Vector3d> latLonEle;
+        std::optional<math::Vector3d> latLonEle;
 
-        // auto linkEntityComp = _ecm.Component<components::ParentEntity>(_entity);
-        // auto parentEntityComp = _ecm.Component<components::ParentEntity>(linkEntityComp->Data());
-        // auto actorComp = _ecm.Component<components::Actor>(parentEntityComp->Data());
+        auto linkEntityComp = _ecm.Component<components::ParentEntity>(_entity);
+        auto parentEntityComp = _ecm.Component<components::ParentEntity>(linkEntityComp->Data());
+        auto actorComp = _ecm.Component<components::Actor>(parentEntityComp->Data());
         
-        // auto nameComp = _ecm.Component<gz::sim::components::Name>(actorComp->Data());
-        // if (nameComp) {
-        //   gzdbg << "Entity name: " << nameComp->Data() << std::endl;
-        // }
+        auto nameComp = _ecm.Component<gz::sim::components::Name>(parentEntityComp->Data());
+        if (nameComp) {
+          gzdbg << "Entity name: " << nameComp->Data() << std::endl;
+        }
 
-        // if (actorComp)
-        // {
-        //   gzdbg << "actor" << std::endl;
-        //   // auto poseComp = _ecm.Component<components::Pose>(_entity);
-        //   // // if (!poseComp) { 
-        //   // //   latLonEle = std::nullopt;  
-        //   // // } else {
+        if (actorComp)
+        {
+          gzdbg << "actor" << std::endl;
+          // auto poseComp = _ecm.Component<components::Pose>(_entity);
+          // // if (!poseComp) { 
+          // //   latLonEle = std::nullopt;  
+          // // } else {
 
-        //   // math::Pose3d pose = poseComp->Data();
+          // math::Pose3d pose = poseComp->Data();
           
-        //   auto sphericalCoordinatesComp =
-        //     _ecm.Component<components::SphericalCoordinates>(
-        //     worldEntity(_entity, _ecm));
-        //   if (nullptr == sphericalCoordinatesComp)
-        //   {
-        //     latLonEle = std::nullopt;
-        //   } else {
+          auto sphericalCoordinatesComp =
+            _ecm.Component<components::SphericalCoordinates>(
+            worldEntity(_entity, _ecm));
+          if (nullptr == sphericalCoordinatesComp)
+          {
+            latLonEle = std::nullopt;
+          } else {
 
-        //     gzdbg << "actor pose" << std::endl;
+            gzdbg << "actor pose" << std::endl;
 
-        //     auto init_pose = _ecm.Component<components::Pose>(actorComp->Data()); 
-        //     auto trajectory_pose = _ecm.Component<components::TrajectoryPose>(actorComp->Data());
+            auto init_pose = _ecm.Component<components::Pose>(parentEntityComp->Data()); 
+            auto trajectory_pose = _ecm.Component<components::TrajectoryPose>(parentEntityComp->Data());
 
-        //     if (!init_pose || !trajectory_pose) {
-        //       latLonEle = std::nullopt;
-        //     } else {
-        //       math::Pose3d world_pose = init_pose->Data() * trajectory_pose->Data();
+            if (!init_pose || !trajectory_pose) {
+              latLonEle = std::nullopt;
+            } else {
+              math::Pose3d world_pose = init_pose->Data() * trajectory_pose->Data();
 
-        //       // auto xyzPose = world_pose * pose;
-        //       auto xyzPose = world_pose;
+              // auto xyzPose = world_pose * pose;
+              auto xyzPose = world_pose;
 
-        //       auto rad = sphericalCoordinatesComp->Data().PositionTransform(
-        //           xyzPose.Pos(),
-        //           math::SphericalCoordinates::LOCAL2,
-        //           math::SphericalCoordinates::SPHERICAL);
+              auto rad = sphericalCoordinatesComp->Data().PositionTransform(
+                  xyzPose.Pos(),
+                  math::SphericalCoordinates::LOCAL2,
+                  math::SphericalCoordinates::SPHERICAL);
 
-        //       latLonEle = math::Vector3d(GZ_RTOD(rad.X()), GZ_RTOD(rad.Y()), rad.Z());
-        //     }
-        //   }
-        // } else {
-        //   gzdbg << "model" << std::endl;
+              latLonEle = math::Vector3d(GZ_RTOD(rad.X()), GZ_RTOD(rad.Y()), rad.Z());
+            }
+          }
+        } else {
+          gzdbg << "model" << std::endl;
         //   // Position
-          auto latLonEle = sphericalCoordinates(_entity, _ecm);
-        //   latLonEle = sphericalCoordinates(_entity, _ecm);
-        // }
+          // auto latLonEle = sphericalCoordinates(_entity, _ecm);
+          latLonEle = sphericalCoordinates(_entity, _ecm);
+        }
         if (!latLonEle)
         {
           gzwarn << "Failed to update NavSat sensor enity [" << _entity
